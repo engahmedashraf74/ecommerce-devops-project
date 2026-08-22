@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_REGION = 'us-east-1'
+        AWS_ACCOUNT_ID = '697114252645'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     triggers {
         pollSCM('* * * * *')
     }
@@ -42,36 +48,38 @@ pipeline {
                 set -e
 
                 docker build -t adservice ./microservices/src/adservice
-
                 docker build -t checkoutservice ./microservices/src/checkoutservice
-
                 docker build -t currencyservice ./microservices/src/currencyservice
-
                 docker build -t emailservice ./microservices/src/emailservice
-
                 docker build -t frontend ./microservices/src/frontend
-
                 docker build -t paymentservice ./microservices/src/paymentservice
-
                 docker build -t productcatalogservice ./microservices/src/productcatalogservice
-
                 docker build -t recommendationservice ./microservices/src/recommendationservice
-
                 docker build -t shippingservice ./microservices/src/shippingservice
-
                 docker build -t cartservice ./microservices/src/cartservice/src
                 '''
             }
         }
-    }
 
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
+        stage('Login To ECR') {
+            steps {
+                sh '''
+                export AWS_PAGER=""
+
+                aws ecr get-login-password --region $AWS_REGION | \
+                docker login \
+                --username AWS \
+                --password-stdin \
+                $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                '''
+            }
         }
 
-        failure {
-            echo 'Pipeline failed!'
-        }
-    }
-}
+        stage('Tag Images') {
+            steps {
+                sh '''
+                docker tag frontend $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/frontend:$IMAGE_TAG
+
+                docker tag adservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/adservice:$IMAGE_TAG
+
+                docker tag cartservice $AWS_ACCOUNT_ID
