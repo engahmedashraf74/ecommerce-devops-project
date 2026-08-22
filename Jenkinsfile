@@ -1,5 +1,3 @@
-//v1 
-
 pipeline {
     agent any
 
@@ -15,6 +13,29 @@ pipeline {
             }
         }
 
+        stage('Terraform Format Check') {
+            steps {
+                sh 'terraform fmt -check -recursive'
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                sh '''
+                terraform init -backend=false
+                terraform validate
+                '''
+            }
+        }
+
+        stage('Kubernetes Manifest Validation') {
+            steps {
+                sh '''
+                kubectl kustomize microservices/kubernetes-manifests > /dev/null
+                '''
+            }
+        }
+
         stage('Build Frontend') {
             steps {
                 sh '''
@@ -22,16 +43,15 @@ pipeline {
                 '''
             }
         }
-
     }
 
     post {
         success {
-            echo 'Build completed successfully!'
+            echo 'Pipeline completed successfully!'
         }
 
         failure {
-            echo 'Build failed!'
+            echo 'Pipeline failed!'
         }
     }
 }
