@@ -82,4 +82,59 @@ pipeline {
 
                 docker tag adservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/adservice:$IMAGE_TAG
 
-                docker tag cartservice $AWS_ACCOUNT_ID
+                docker tag cartservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cartservice:$IMAGE_TAG
+
+                docker tag checkoutservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/checkoutservice:$IMAGE_TAG
+
+                docker tag currencyservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/currencyservice:$IMAGE_TAG
+
+                docker tag emailservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/emailservice:$IMAGE_TAG
+
+                docker tag paymentservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/paymentservice:$IMAGE_TAG
+
+                docker tag productcatalogservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/productcatalogservice:$IMAGE_TAG
+
+                docker tag recommendationservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/recommendationservice:$IMAGE_TAG
+
+                docker tag shippingservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/shippingservice:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Push Images To ECR') {
+            steps {
+                sh '''
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/frontend:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/adservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cartservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/checkoutservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/currencyservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/emailservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/paymentservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/productcatalogservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/recommendationservice:$IMAGE_TAG
+
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/shippingservice:$IMAGE_TAG
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Push completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
