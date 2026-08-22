@@ -1,0 +1,39 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Terraform variables (secrets)
+*.tfvars
+*.tfvars.json
+
+# Terraform plans
+*.tfplan
+
+# Sensitive files
+*.pem
+*.key
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# ArgoCD
+argocd-initial-admin-secret.yaml
+
+# Environment variables
+.env
+.env.*
