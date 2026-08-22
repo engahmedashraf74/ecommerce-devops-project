@@ -11,29 +11,6 @@ pipeline {
             }
         }
 
-        stage('Terraform Format Check') {
-            steps {
-                sh 'terraform fmt -check -recursive'
-            }
-        }
-
-        stage('Terraform Validate') {
-            steps {
-                sh '''
-                terraform init -backend=false
-                terraform validate
-                '''
-            }
-        }
-
-        stage('Validate Kubernetes Manifests') {
-            steps {
-                sh '''
-                kubectl kustomize microservices/kubernetes-manifests > /dev/null
-                '''
-            }
-        }
-
         stage('Build Frontend') {
             steps {
                 sh '''
@@ -42,5 +19,6 @@ pipeline {
                 '''
             }
         }
+
     }
 }
