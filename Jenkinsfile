@@ -1,7 +1,11 @@
-#v1 
+//v1 
 
 pipeline {
     agent any
+
+    triggers {
+        pollSCM('* * * * *')
+    }
 
     stages {
 
@@ -14,11 +18,20 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 sh '''
-                docker build -t frontend \
-                ./microservices/src/frontend
+                docker build -t frontend ./microservices/src/frontend
                 '''
             }
         }
 
+    }
+
+    post {
+        success {
+            echo 'Build completed successfully!'
+        }
+
+        failure {
+            echo 'Build failed!'
+        }
     }
 }
