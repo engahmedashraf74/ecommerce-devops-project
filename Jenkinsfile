@@ -5,6 +5,7 @@ pipeline {
         AWS_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = '697114252645'
         IMAGE_TAG = "${BUILD_NUMBER}"
+        SERVICES = 'frontend adservice cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice shippingservice'
     }
 
     triggers {
@@ -78,25 +79,14 @@ pipeline {
         stage('Tag Images') {
             steps {
                 sh '''
-                docker tag frontend $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/frontend:$IMAGE_TAG
+                for service in $SERVICES
+                do
+                    docker tag $service \
+                    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$service:$IMAGE_TAG
 
-                docker tag adservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/adservice:$IMAGE_TAG
-
-                docker tag cartservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cartservice:$IMAGE_TAG
-
-                docker tag checkoutservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/checkoutservice:$IMAGE_TAG
-
-                docker tag currencyservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/currencyservice:$IMAGE_TAG
-
-                docker tag emailservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/emailservice:$IMAGE_TAG
-
-                docker tag paymentservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/paymentservice:$IMAGE_TAG
-
-                docker tag productcatalogservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/productcatalogservice:$IMAGE_TAG
-
-                docker tag recommendationservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/recommendationservice:$IMAGE_TAG
-
-                docker tag shippingservice $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/shippingservice:$IMAGE_TAG
+                    docker tag $service \
+                    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$service:latest
+                done
                 '''
             }
         }
@@ -104,25 +94,14 @@ pipeline {
         stage('Push Images To ECR') {
             steps {
                 sh '''
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/frontend:$IMAGE_TAG
+                for service in $SERVICES
+                do
+                    docker push \
+                    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$service:$IMAGE_TAG
 
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/adservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/cartservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/checkoutservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/currencyservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/emailservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/paymentservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/productcatalogservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/recommendationservice:$IMAGE_TAG
-
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/shippingservice:$IMAGE_TAG
+                    docker push \
+                    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$service:latest
+                done
                 '''
             }
         }
