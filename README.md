@@ -4,8 +4,7 @@ End-to-End DevOps project built on AWS using Terraform, Jenkins, Docker, EKS, Ar
 
 ## Architecture
 
-GitHub → Jenkins → Amazon ECR → ArgoCD → Amazon EKS → Prometheus & Grafana
-
+GitHub → Jenkins CI Pipeline → Terraform & K8s Validation → Docker Image Build → Amazon ECR → ArgoCD → Amazon EKS Cluster → AWS LoadBalancer → Prometheus Monitoring → Grafana Dashboards
 ## Tech Stack
 
 - AWS (EKS, ECR, VPC, IAM)
